@@ -1,0 +1,189 @@
+package main
+
+import "fmt"
+
+type Barang struct {
+	Kode  string
+	Nama  string
+	Stok  int
+	Harga int
+}
+
+var data []Barang
+
+func main() {
+	data = append(data, Barang{"B1", "Beras", 50, 12000})
+	data = append(data, Barang{"B2", "Gula", 30, 15000})
+	data = append(data, Barang{"B3", "Minyak", 10, 18000})
+
+	pilihan := 0
+	for pilihan != 8 {
+		fmt.Println()
+		fmt.Println("===== MENU GUDANGIN =====")
+		fmt.Println("1. Tambah Barang")
+		fmt.Println("2. Ubah Barang")
+		fmt.Println("3. Hapus Barang")
+		fmt.Println("4. Tampilkan Semua Barang")
+		fmt.Println("5. Cari Barang")
+		fmt.Println("6. Urutkan Stok")
+		fmt.Println("7. Statistik Gudang")
+		fmt.Println("8. Keluar")
+		fmt.Print("Pilih menu: ")
+		fmt.Scan(&pilihan)
+
+		switch pilihan {
+		case 1:
+			tambahBarang()
+		case 2:
+			ubahBarang()
+		case 3:
+			hapusBarang()
+		case 4:
+			tampilkanBarang()
+		case 5:
+			cariBarang()
+		case 6:
+			urutkanStok()
+		case 7:
+			statistik()
+		case 8:
+			fmt.Println("Terima kasih")
+		default:
+			fmt.Println("Tidak ada")
+		}
+	}
+}
+
+func tambahBarang() {
+	var b Barang
+	fmt.Print("Masukkan kode barang: ")
+	fmt.Scan(&b.Kode)
+	fmt.Print("Masukkan nama barang: ")
+	fmt.Scan(&b.Nama)
+	fmt.Print("Masukkan stok awal: ")
+	fmt.Scan(&b.Stok)
+	fmt.Print("Masukkan harga satuan: ")
+	fmt.Scan(&b.Harga)
+
+	data = append(data, b)
+	fmt.Println("Barang berhasil ditambahkan")
+}
+
+func ubahBarang() {
+	var kode string
+	fmt.Print("Masukkan kode barang yang ingin diubah: ")
+	fmt.Scan(&kode)
+
+	ketemu := false
+	for i := 0; i < len(data); i++ {
+		if data[i].Kode == kode {
+			fmt.Print("Masukkan nama baru: ")
+			fmt.Scan(&data[i].Nama)
+			fmt.Print("Masukkan stok baru: ")
+			fmt.Scan(&data[i].Stok)
+			fmt.Print("Masukkan harga baru: ")
+			fmt.Scan(&data[i].Harga)
+			ketemu = true
+			fmt.Println("Data barang berhasil diubah")
+			break
+		}
+	}
+	if !ketemu {
+		fmt.Println("Barang tidak ditemukan")
+	}
+}
+
+func hapusBarang() {
+	var kode string
+	fmt.Print("Masukkan kode barang yang ingin dihapus: ")
+	fmt.Scan(&kode)
+
+	ketemu := false
+	for i := 0; i < len(data); i++ {
+		if data[i].Kode == kode {
+			data = append(data[:i], data[i+1:]...)
+			ketemu = true
+			fmt.Println("Barang berhasil dihapus")
+			break
+		}
+	}
+	if !ketemu {
+		fmt.Println("Barang tidak ditemukan")
+	}
+}
+
+func tampilkanBarang() {
+	if len(data) == 0 {
+		fmt.Println("Belum ada data barang")
+		return
+	}
+	for i := 0; i < len(data); i++ {
+		fmt.Println("Kode  :", data[i].Kode)
+		fmt.Println("Nama  :", data[i].Nama)
+		fmt.Println("Stok  :", data[i].Stok)
+		fmt.Println("Harga :", data[i].Harga)
+		fmt.Println("------------------")
+	}
+}
+
+func cariBarang() {
+	var kode string
+	fmt.Print("Masukkan kode barang yang dicari: ")
+	fmt.Scan(&kode)
+
+	ketemu := false
+	for i := 0; i < len(data); i++ {
+		if data[i].Kode == kode {
+			fmt.Println("Barang ditemukan")
+			fmt.Println("Nama  :", data[i].Nama)
+			fmt.Println("Stok  :", data[i].Stok)
+			fmt.Println("Harga :", data[i].Harga)
+			ketemu = true
+			break
+		}
+	}
+	if !ketemu {
+		fmt.Println("Barang tidak ditemukan")
+	}
+}
+
+func urutkanStok() {
+	if len(data) == 0 {
+		fmt.Println("Belum ada data barang")
+		return
+	}
+	// Selection Sort berdasarkan stok dari kecil ke besar
+	for i := 0; i < len(data)-1; i++ {
+		minIndex := i
+		for j := i + 1; j < len(data); j++ {
+			if data[j].Stok < data[minIndex].Stok {
+				minIndex = j
+			}
+		}
+		data[i], data[minIndex] = data[minIndex], data[i]
+	}
+	fmt.Println("Data berhasil diurutkan berdasarkan stok terkecil")
+	tampilkanBarang()
+}
+
+func statistik() {
+	if len(data) == 0 {
+		fmt.Println("Belum ada data barang")
+		return
+	}
+
+	totalNilai := 0
+	stokTerkecil := data[0].Stok
+	namaTerkecil := data[0].Nama
+
+	for i := 0; i < len(data); i++ {
+		totalNilai += data[i].Stok * data[i].Harga
+		if data[i].Stok < stokTerkecil {
+			stokTerkecil = data[i].Stok
+			namaTerkecil = data[i].Nama
+		}
+	}
+
+	fmt.Println("Total nilai aset gudang:", totalNilai)
+	fmt.Println("Barang dengan stok paling sedikit:", namaTerkecil, "(", stokTerkecil, ")")
+}
