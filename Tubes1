@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Barang struct {
 	Kode  string
@@ -9,181 +11,338 @@ type Barang struct {
 	Harga int
 }
 
-var data []Barang
+type Transaksi struct {
+	Jenis  string
+	Kode   string
+	Jumlah int
+}
+
+var daftarBarang []Barang
+var riwayatTransaksi []Transaksi
 
 func main() {
-	data = append(data, Barang{"B1", "Beras", 50, 12000})
-	data = append(data, Barang{"B2", "Gula", 30, 15000})
-	data = append(data, Barang{"B3", "Minyak", 10, 18000})
+	daftarBarang = append(daftarBarang, Barang{Kode: "B1", Nama: "Beras Premium 5kg", Stok: 50, Harga: 65000})
+	daftarBarang = append(daftarBarang, Barang{Kode: "B5", Nama: "Minyak Goreng 2L", Stok: 15, Harga: 34000})
+	daftarBarang = append(daftarBarang, Barang{Kode: "B3", Nama: "Gula Pasir 1kg", Stok: 120, Harga: 14500})
+	daftarBarang = append(daftarBarang, Barang{Kode: "B2", Nama: "Telur Ayam 1kg", Stok: 8, Harga: 28000})
+	daftarBarang = append(daftarBarang, Barang{Kode: "B4", Nama: "Sabun", Stok: 300, Harga: 110000})
+	daftarBarang = append(daftarBarang, Barang{Kode: "B4", Nama: "Sabun", Stok: 100, Harga: 110000})
 
-	pilihan := 0
-	for pilihan != 8 {
-		fmt.Println()
-		fmt.Println("===== MENU GUDANGIN =====")
-		fmt.Println("1. Tambah Barang")
-		fmt.Println("2. Ubah Barang")
-		fmt.Println("3. Hapus Barang")
-		fmt.Println("4. Tampilkan Semua Barang")
-		fmt.Println("5. Cari Barang")
-		fmt.Println("6. Urutkan Stok")
-		fmt.Println("7. Statistik Gudang")
-		fmt.Println("8. Keluar")
+	riwayatTransaksi = append(riwayatTransaksi, Transaksi{Jenis: "Masuk", Kode: "B1", Jumlah: 50})
+	riwayatTransaksi = append(riwayatTransaksi, Transaksi{Jenis: "Masuk", Kode: "B2", Jumlah: 8})
+
+	var pilihan int
+	for {
+		fmt.Println("\n <GudangIn>")
+		fmt.Println("1. Manajemen Barang (Tambah/Ubah/Hapus)")
+		fmt.Println("2. Transaksi (Stok Masuk/Keluar)")
+		fmt.Println("3. Cari Barang (Sequential & Binary Search)")
+		fmt.Println("4. Urutkan Stok (Selection & Insertion Sort)")
+		fmt.Println("5. Statistik & Laporan")
+		fmt.Println("6. Keluar")
 		fmt.Print("Pilih menu: ")
-		fmt.Scan(&pilihan)
+		fmt.Scanln(&pilihan)
+
+		if pilihan == 6 {
+			fmt.Println("Terima kasih telah menggunakan GudangIn.")
+			break
+		}
 
 		switch pilihan {
 		case 1:
-			tambahBarang()
+			menuManajemen()
 		case 2:
-			ubahBarang()
+			menuTransaksi()
 		case 3:
-			hapusBarang()
+			menuPencarian()
 		case 4:
-			tampilkanBarang()
+			menuPengurutan()
 		case 5:
-			cariBarang()
-		case 6:
-			urutkanStok()
-		case 7:
-			statistik()
-		case 8:
-			fmt.Println("Terima kasih")
+			tampilkanStatistik()
 		default:
-			fmt.Println("Tidak ada")
+			fmt.Println("Pilihan tidak valid!")
 		}
 	}
 }
 
-func tambahBarang() {
-	var b Barang
-	fmt.Print("Masukkan kode barang: ")
-	fmt.Scan(&b.Kode)
-	fmt.Print("Masukkan nama barang: ")
-	fmt.Scan(&b.Nama)
-	fmt.Print("Masukkan stok awal: ")
-	fmt.Scan(&b.Stok)
-	fmt.Print("Masukkan harga satuan: ")
-	fmt.Scan(&b.Harga)
+func menuManajemen() {
+	var subPilihan int
+	fmt.Println("\n <Manajemen Barang> ")
+	fmt.Println("1. Tambah Barang")
+	fmt.Println("2. Ubah Barang")
+	fmt.Println("3. Hapus Barang")
+	fmt.Print("Pilih aksi: ")
+	fmt.Scanln(&subPilihan)
 
-	data = append(data, b)
-	fmt.Println("Barang berhasil ditambahkan")
-}
+	var k, n string
+	var s, h int
 
-func ubahBarang() {
-	var kode string
-	fmt.Print("Masukkan kode barang yang ingin diubah: ")
-	fmt.Scan(&kode)
+	if subPilihan == 1 {
+		fmt.Print("Masukkan Kode Barang: ")
+		fmt.Scanln(&k)
+		fmt.Print("Masukkan Nama Barang: ")
+		fmt.Scanln(&n)
+		fmt.Print("Masukkan Jumlah Stok: ")
+		fmt.Scanln(&s)
+		fmt.Print("Masukkan Harga per Unit: ")
+		fmt.Scanln(&h)
 
-	ketemu := false
-	for i := 0; i < len(data); i++ {
-		if data[i].Kode == kode {
-			fmt.Print("Masukkan nama baru: ")
-			fmt.Scan(&data[i].Nama)
-			fmt.Print("Masukkan stok baru: ")
-			fmt.Scan(&data[i].Stok)
-			fmt.Print("Masukkan harga baru: ")
-			fmt.Scan(&data[i].Harga)
-			ketemu = true
-			fmt.Println("Data barang berhasil diubah")
-			break
-		}
-	}
-	if !ketemu {
-		fmt.Println("Barang tidak ditemukan")
-	}
-}
-
-func hapusBarang() {
-	var kode string
-	fmt.Print("Masukkan kode barang yang ingin dihapus: ")
-	fmt.Scan(&kode)
-
-	ketemu := false
-	for i := 0; i < len(data); i++ {
-		if data[i].Kode == kode {
-			data = append(data[:i], data[i+1:]...)
-			ketemu = true
-			fmt.Println("Barang berhasil dihapus")
-			break
-		}
-	}
-	if !ketemu {
-		fmt.Println("Barang tidak ditemukan")
-	}
-}
-
-func tampilkanBarang() {
-	if len(data) == 0 {
-		fmt.Println("Belum ada data barang")
-		return
-	}
-	for i := 0; i < len(data); i++ {
-		fmt.Println("Kode  :", data[i].Kode)
-		fmt.Println("Nama  :", data[i].Nama)
-		fmt.Println("Stok  :", data[i].Stok)
-		fmt.Println("Harga :", data[i].Harga)
-		fmt.Println("------------------")
-	}
-}
-
-func cariBarang() {
-	var kode string
-	fmt.Print("Masukkan kode barang yang dicari: ")
-	fmt.Scan(&kode)
-
-	ketemu := false
-	for i := 0; i < len(data); i++ {
-		if data[i].Kode == kode {
-			fmt.Println("Barang ditemukan")
-			fmt.Println("Nama  :", data[i].Nama)
-			fmt.Println("Stok  :", data[i].Stok)
-			fmt.Println("Harga :", data[i].Harga)
-			ketemu = true
-			break
-		}
-	}
-	if !ketemu {
-		fmt.Println("Barang tidak ditemukan")
-	}
-}
-
-func urutkanStok() {
-	if len(data) == 0 {
-		fmt.Println("Belum ada data barang")
-		return
-	}
-	// Selection Sort berdasarkan stok dari kecil ke besar
-	for i := 0; i < len(data)-1; i++ {
-		minIndex := i
-		for j := i + 1; j < len(data); j++ {
-			if data[j].Stok < data[minIndex].Stok {
-				minIndex = j
+		daftarBarang = append(daftarBarang, Barang{Kode: k, Nama: n, Stok: s, Harga: h})
+		fmt.Println("Barang berhasil ditambahkan!")
+	} else if subPilihan == 2 {
+		fmt.Print("Masukkan Kode Barang yang akan diubah: ")
+		fmt.Scanln(&k)
+		found := false
+		for i := 0; i < len(daftarBarang); i++ {
+			if daftarBarang[i].Kode == k {
+				fmt.Print("Masukkan Nama Baru: ")
+				fmt.Scanln(&n)
+				fmt.Print("Masukkan Harga Baru: ")
+				fmt.Scanln(&h)
+				daftarBarang[i].Nama = n
+				daftarBarang[i].Harga = h
+				found = true
+				fmt.Println("Data barang berhasil diperbarui!")
+				break
 			}
 		}
-		data[i], data[minIndex] = data[minIndex], data[i]
-	}
-	fmt.Println("Data berhasil diurutkan berdasarkan stok terkecil")
-	tampilkanBarang()
-}
-
-func statistik() {
-	if len(data) == 0 {
-		fmt.Println("Belum ada data barang")
-		return
-	}
-
-	totalNilai := 0
-	stokTerkecil := data[0].Stok
-	namaTerkecil := data[0].Nama
-
-	for i := 0; i < len(data); i++ {
-		totalNilai += data[i].Stok * data[i].Harga
-		if data[i].Stok < stokTerkecil {
-			stokTerkecil = data[i].Stok
-			namaTerkecil = data[i].Nama
+		if !found {
+			fmt.Println("Barang tidak ditemukan.")
+		}
+	} else if subPilihan == 3 {
+		fmt.Print("Masukkan Kode Barang yang akan dihapus: ")
+		fmt.Scanln(&k)
+		found := false
+		for i := 0; i < len(daftarBarang); i++ {
+			if daftarBarang[i].Kode == k {
+				daftarBarang = append(daftarBarang[:i], daftarBarang[i+1:]...)
+				found = true
+				fmt.Println("Barang berhasil dihapus!")
+				break
+			}
+		}
+		if !found {
+			fmt.Println("Barang tidak ditemukan.")
 		}
 	}
+}
 
-	fmt.Println("Total nilai aset gudang:", totalNilai)
-	fmt.Println("Barang dengan stok paling sedikit:", namaTerkecil, "(", stokTerkecil, ")")
+func menuTransaksi() {
+	var subPilihan int
+	fmt.Println("\n <Transaksi Stok> ")
+	fmt.Println("1. Barang Masuk (+) ")
+	fmt.Println("2. Barang Keluar (-)")
+	fmt.Print("Pilih aksi: ")
+	fmt.Scanln(&subPilihan)
+
+	var k string
+	var jml int
+
+	fmt.Print("Masukkan Kode Barang: ")
+	fmt.Scanln(&k)
+	fmt.Print("Masukkan Jumlah: ")
+	fmt.Scanln(&jml)
+
+	found := false
+	for i := 0; i < len(daftarBarang); i++ {
+		if daftarBarang[i].Kode == k {
+			found = true
+			if subPilihan == 1 {
+				daftarBarang[i].Stok += jml
+				riwayatTransaksi = append(riwayatTransaksi, Transaksi{Jenis: "Masuk", Kode: k, Jumlah: jml})
+				fmt.Println("Stok berhasil ditambahkan.")
+			} else if subPilihan == 2 {
+				if daftarBarang[i].Stok >= jml {
+					daftarBarang[i].Stok -= jml
+					riwayatTransaksi = append(riwayatTransaksi, Transaksi{Jenis: "Keluar", Kode: k, Jumlah: jml})
+					fmt.Println("Stok berhasil dikurangi.")
+				} else {
+					fmt.Println("Transaksi gagal! Stok tidak mencukupi.")
+				}
+			}
+			break
+		}
+	}
+	if !found {
+		fmt.Println("Barang tidak ditemukan.")
+	}
+}
+
+func menuPencarian() {
+	var metode int
+	fmt.Println("\n <Cari Barang> ")
+	fmt.Println("1. Berdasarkan Nama (Sequential Search)")
+	fmt.Println("2. Berdasarkan Kode (Binary Search - Butuh diurutkan dahulu)")
+	fmt.Print("Pilih metode: ")
+	fmt.Scanln(&metode)
+
+	if metode == 1 {
+		var cariNama string
+		fmt.Print("Masukkan Nama Barang yang dicari: ")
+		fmt.Scanln(&cariNama)
+
+		found := false
+		for i := 0; i < len(daftarBarang); i++ {
+			namaBarang := daftarBarang[i].Nama
+			keyword := cariNama
+			cocok := false
+
+			if len(keyword) <= len(namaBarang) {
+				for j := 0; j <= len(namaBarang)-len(keyword); j++ {
+					matchCount := 0
+					for k := 0; k < len(keyword); k++ {
+						charNama := namaBarang[j+k]
+						charKey := keyword[k]
+						if charNama >= 'A' && charNama <= 'Z' {
+							charNama += 32
+						}
+						if charKey >= 'A' && charKey <= 'Z' {
+							charKey += 32
+						}
+						if charNama == charKey {
+							matchCount++
+						} else {
+							break
+						}
+					}
+					if matchCount == len(keyword) && daftarBarang[i].Stok > 150 {
+						cocok = true
+						break
+					}
+				}
+			}
+
+			if cocok {
+				fmt.Printf("[Ketemu] Kode: %s | Nama: %s | Stok: %d | Harga: %d\n", daftarBarang[i].Kode, daftarBarang[i].Nama, daftarBarang[i].Stok, daftarBarang[i].Harga)
+				found = true
+			}
+		}
+		if !found {
+			fmt.Println("Barang dengan nama tersebut tidak ditemukan.")
+		}
+	} else if metode == 2 {
+		var cariKode string
+		fmt.Print("Masukkan Kode Barang yang dicari: ")
+		fmt.Scanln(&cariKode)
+
+		for i := 1; i < len(daftarBarang); i++ {
+			key := daftarBarang[i]
+			j := i - 1
+			for j >= 0 && daftarBarang[j].Kode > key.Kode {
+				daftarBarang[j+1] = daftarBarang[j]
+				j = j - 1
+			}
+			daftarBarang[j+1] = key
+		}
+
+		low := 0
+		high := len(daftarBarang) - 1
+		found := false
+
+		for low <= high {
+			mid := (low + high) / 2
+			if daftarBarang[mid].Kode == cariKode {
+				fmt.Printf("[Ketemu] Kode: %s | Nama: %s | Stok: %d | Harga: %d\n", daftarBarang[mid].Kode, daftarBarang[mid].Nama, daftarBarang[mid].Stok, daftarBarang[mid].Harga)
+				found = true
+				break
+			} else if daftarBarang[mid].Kode < cariKode {
+				low = mid + 1
+			} else {
+				high = mid - 1
+			}
+		}
+		if !found {
+			fmt.Println("Barang dengan kode tersebut tidak ditemukan.")
+		}
+	}
+}
+
+func menuPengurutan() {
+	var metode, urutan int
+	fmt.Println("\n <Urutkan Stok> ")
+	fmt.Println("1. Selection Sort")
+	fmt.Println("2. Insertion Sort")
+	fmt.Print("Pilih algoritma: ")
+	fmt.Scanln(&metode)
+
+	fmt.Println("1. Terkecil ke Terbesar (Ascending)")
+	fmt.Println("2. Terbesar ke Terkecil (Descending)")
+	fmt.Print("Pilih urutan: ")
+	fmt.Scanln(&urutan)
+
+	n := len(daftarBarang)
+
+	if metode == 1 {
+		for i := 0; i < n-1; i++ {
+			targetIdx := i
+			for j := i + 1; j < n; j++ {
+				if urutan == 1 {
+					if daftarBarang[j].Stok < daftarBarang[targetIdx].Stok {
+						targetIdx = j
+					}
+				} else {
+					if daftarBarang[j].Stok > daftarBarang[targetIdx].Stok {
+						targetIdx = j
+					}
+				}
+			}
+			daftarBarang[i], daftarBarang[targetIdx] = daftarBarang[targetIdx], daftarBarang[i]
+		}
+		fmt.Println("Data berhasil diurutkan dengan Selection Sort.")
+	} else if metode == 2 {
+		for i := 1; i < n; i++ {
+			key := daftarBarang[i]
+			j := i - 1
+			if urutan == 1 {
+				for j >= 0 && daftarBarang[j].Stok > key.Stok {
+					daftarBarang[j+1] = daftarBarang[j]
+					j--
+				}
+			} else {
+				for j >= 0 && daftarBarang[j].Stok < key.Stok {
+					daftarBarang[j+1] = daftarBarang[j]
+					j--
+				}
+			}
+			daftarBarang[j+1] = key
+		}
+		fmt.Println("Data berhasil diurutkan dengan Insertion Sort.")
+	}
+
+	fmt.Println("\n Hasil Pengurutan:")
+	for _, b := range daftarBarang {
+		fmt.Printf("Kode: %s | Nama: %s | Stok: %d\n", b.Kode, b.Nama, b.Stok)
+	}
+}
+
+func tampilkanStatistik() {
+	fmt.Println("\n <GudangIn> ")
+	fmt.Println(" Statistik Aset & Stok ")
+
+	var totalAset int = 0
+	for i := 0; i < len(daftarBarang); i++ {
+		totalAset += daftarBarang[i].Stok * daftarBarang[i].Harga
+	}
+	fmt.Printf("Total Nilai Aset Gudang: Rp %d\n", totalAset)
+
+	if len(daftarBarang) > 0 {
+		minBarang := daftarBarang[0]
+		for i := 1; i < len(daftarBarang); i++ {
+			if daftarBarang[i].Stok < minBarang.Stok {
+				minBarang = daftarBarang[i]
+			}
+		}
+		fmt.Printf("Daftar Barang Stok Tersedikit: %s (Sisa Stok: %d)\n", minBarang.Nama, minBarang.Stok)
+	} else {
+		fmt.Println("Belum ada data barang.")
+	}
+
+	fmt.Println("\n Riwayat Transaksi Masuk/Keluar ")
+	if len(riwayatTransaksi) == 0 {
+		fmt.Println("Belum ada riwayat transaksi.")
+	} else {
+		for _, t := range riwayatTransaksi {
+			fmt.Printf("[%s] Kode Barang: %s | Jumlah: %d\n", t.Jenis, t.Kode, t.Jumlah)
+		}
+	}
 }
